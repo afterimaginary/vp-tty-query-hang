@@ -26,7 +26,11 @@ dumb: exited 0 after 0.1s, task ran
 devnull: exited 0 after 0.1s, task ran
 ```
 
-A second argument changes the timeout, for example `python3 probe.py silent 30`.
+A second argument changes the timeout, for example `python3 probe.py silent 30`. Set `VP_BIN` to test another `vp` binary, such as a local build: `VP_BIN=../vite-plus/target/debug/vp python3 probe.py silent`.
+
+## Cause
+
+On macOS, `poll()` does not support `/dev/tty`: it returns `POLLNVAL` at once instead of waiting. The color query waits with `poll()` before each read, so its 200 ms deadline never applies, and each `read()` blocks until the terminal sends something. Answering every query hides this. A missing `DA1` reply leaves the last read waiting forever. `select()` works with `/dev/tty` on macOS.
 
 ## What it shows
 

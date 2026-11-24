@@ -42,7 +42,8 @@ def main() -> int:
         TERM="dumb" if MODE == "dumb" else "xterm-256color",
         COLORTERM="truecolor",
     )
-    command = ["vp", "run", "hello"]
+    # VP_BIN points the probe at another vp binary, such as a local debug build.
+    command = [os.environ.get("VP_BIN", "vp"), "run", "hello"]
 
     pid, fd = pty.fork()
     if pid == 0:
