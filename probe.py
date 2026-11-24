@@ -4,10 +4,11 @@ Modes:
   silent     the terminal never answers queries (the bug)
   responder  the terminal answers the color queries and DA1, like most terminals do
   colors     the terminal answers the color queries but not DA1
+  da1        the terminal answers DA1 but not the color queries
   dumb       TERM=dumb, so vp skips the query
   devnull    stdin is /dev/null instead of the terminal
 
-Usage: python3 probe.py [silent|responder|colors|dumb|devnull] [timeout-seconds]
+Usage: python3 probe.py [silent|responder|colors|da1|dumb|devnull] [timeout-seconds]
 """
 
 import os
@@ -28,9 +29,10 @@ DA1_QUERY = re.compile(rb"\x1b\[0?c")
 
 def reply(query: bytes) -> bytes:
     out = b""
-    for match in OSC_QUERY.finditer(query):
-        out += b"\x1b]" + match.group(1) + b";rgb:8080/8080/8080\x1b\\"
-    if MODE == "responder" and DA1_QUERY.search(query):
+    if MODE != "da1":
+        for match in OSC_QUERY.finditer(query):
+            out += b"\x1b]" + match.group(1) + b";rgb:8080/8080/8080\x1b\\"
+    if MODE in ("responder", "da1") and DA1_QUERY.search(query):
         out += b"\x1b[?62;22c"
     return out
 
@@ -63,7 +65,7 @@ def main() -> int:
             except OSError:
                 chunk = b""
             output += chunk
-            if MODE in ("responder", "colors") and chunk:
+            if MODE in ("responder", "colors", "da1") and chunk:
                 answer = reply(chunk)
                 if answer:
                     os.write(fd, answer)

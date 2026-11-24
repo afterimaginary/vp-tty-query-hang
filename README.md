@@ -9,6 +9,7 @@ Minimal reproduction for a vite-plus bug. Before it runs a command, `vp` asks th
 ```sh
 python3 probe.py silent      # no answers: hangs, killed after 10s
 python3 probe.py colors      # answers the color queries, not DA1: hangs
+python3 probe.py da1         # answers only DA1: runs the task
 python3 probe.py responder   # answers the color queries and DA1: runs the task
 python3 probe.py dumb        # TERM=dumb, so vp skips the query: runs the task
 python3 probe.py devnull     # stdin is /dev/null: runs the task
@@ -21,6 +22,7 @@ silent: HANG, no exit after 10s
   output so far: b'\x1b]10;?\x07\x1b]4;4;?\x07\x1b]4;5;?\x07\x1b[c'
 colors: HANG, no exit after 10s
   output so far: b'\x1b]10;?\x07\x1b]4;4;?\x07\x1b]4;5;?\x07\x1b[c'
+da1: exited 0 after 0.1s, task ran
 responder: exited 0 after 0.1s, task ran
 dumb: exited 0 after 0.1s, task ran
 devnull: exited 0 after 0.1s, task ran
