@@ -1,0 +1,7 @@
+{
+	"name": "vp-tty-query-hang",
+	"private": true,
+	"scripts": {
+		"hello": "node -e \"console.log('hello from the task')\""
+	}
+}
